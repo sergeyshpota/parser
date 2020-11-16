@@ -144,6 +144,12 @@ class SiteCrawler
         }
     }
 
+    /**
+     * Parse emails
+     *
+     * @param $link
+     * @return false|mixed
+     */
     protected function parseEmails($link)
     {
         try {
@@ -159,6 +165,7 @@ class SiteCrawler
         }
         if ($crawler->count()) {
             $pageContent = strtolower($crawler->html());
+            // Match only emails which have the same domain as site
             preg_match_all("/[a-z0-9_\-\+\.]+@{$baseDomain}?/i", $pageContent, $matchesCurrentDomain);
 
             return $matchesCurrentDomain[0];
@@ -167,6 +174,12 @@ class SiteCrawler
         return false;
     }
 
+    /**
+     * Bring input urls to the correct form
+     *
+     * @param $url
+     * @return string
+     */
     protected function castUrl($url)
     {
         $url = str_replace('www.', '', $url);
@@ -180,11 +193,23 @@ class SiteCrawler
         return trim($url);
     }
 
+    /**
+     * Add log entry
+     *
+     * @param $text
+     */
     protected function addLog($text)
     {
         fwrite($this->logFile, "{$text}\n");
     }
 
+    /**
+     * Add row to the result csv
+     *
+     * @param $url
+     * @param $emails
+     * @param string $notes
+     */
     protected function addResultRow($url, $emails, $notes = '')
     {
         if (is_array($emails) && count($emails) > 0) {
